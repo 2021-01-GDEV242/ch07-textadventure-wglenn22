@@ -1,5 +1,6 @@
 import java.util.Set;
 import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.Iterator;
 
 /**
@@ -19,8 +20,10 @@ import java.util.Iterator;
 public class Room 
 {
     private String description;
-    private HashMap<String, Room> exits;        // stores exits of this room.
-
+    // stores exits of this room.
+    private HashMap<String, Room> exits;
+    
+    private ArrayList<Item> items;
     /**
      * Create a room described "description". Initially, it has
      * no exits. "description" is something like "a kitchen" or
@@ -30,7 +33,8 @@ public class Room
     public Room(String description) 
     {
         this.description = description;
-        exits = new HashMap<>();
+        exits = new HashMap<String, Room>();
+       items = new ArrayList<Item>();
     }
 
     /**
@@ -60,9 +64,20 @@ public class Room
      */
     public String getLongDescription()
     {
-        return "You are " + description + ".\n" + getExitString();
+        return "You are in " + description + "\n" + getItemsInRoom()+ 
+        " "+ getExitString();
     }
-
+    /**
+     * Return items seen in a room
+     */
+    public String getItemsInRoom()
+    {
+        String roomItems = "The items you see are: " ;
+        for(Item item : items){
+         roomItems+= item.getItemDescription()+ "\n";
+        }
+        return roomItems;
+    }
     /**
      * Return a string describing the room's exits, for example
      * "Exits: north west".
@@ -70,14 +85,43 @@ public class Room
      */
     private String getExitString()
     {
-        String returnString = "Exits:";
+        String returnString = "Exits: ";
         Set<String> keys = exits.keySet();
         for(String exit : keys) {
             returnString += " " + exit;
         }
         return returnString;
     }
-
+    public void addItems(Item item){
+        items.add(item);  
+    }
+    public ArrayList<Item> getRoomItems()
+    {
+        return items;
+    }
+    public Item getItem(String itemName)
+    {
+        for (int i =0; i < items.size(); i++)
+        {
+            if (items.get(i).getItemName().equalsIgnoreCase(itemName)){
+            return items.get(i);
+            }
+        }
+        return null;
+    }
+    
+    public void removeItem(Item item)
+    {
+        for(int i =0; i < items.size(); i++)
+        {
+            if(items.get(i) == item){
+                items.remove(item);
+                break;
+            }
+            
+        }
+        
+    }
     /**
      * Return the room that is reached if we go from this room in direction
      * "direction". If there is no room in that direction, return null.
